@@ -33,6 +33,10 @@ $(function () {
 	$('#time2').val('20:00');
 	$('#time3').val('25:00');
 	$('#info').html("Click to edit this message.");
+	const alwaysWake = $('#always-wake').prop('checked');
+	alwaysWake && navigator.wakeLock.request("screen").then((_this) => {
+		wakeLock = _this;
+	});
 
 	function getHashParams() {
 		var hashParams = {};
@@ -56,6 +60,7 @@ $(function () {
 		if (params.t2 !== undefined) $('#time2').val(params.t2);
 		if (params.t3 !== undefined) $('#time3').val(params.t3);
 		if (params.m !== undefined) $('#info').html(DOMPurify.sanitize(params.m));
+		if (params.wake !== undefined) $('#always-wake').prop('checked', params.wake === 'true');
 		if (loadedcss !== '') {
 			location.reload();
 		}
@@ -72,7 +77,8 @@ $(function () {
 			+ '&t1=' + $('#time1').val()
 			+ '&t2=' + $('#time2').val()
 			+ '&t3=' + $('#time3').val()
-			+ '&m=' + encodeURIComponent($('#info').html());
+			+ '&m=' + encodeURIComponent($('#info').html())
+			+ '&wake=' + $('#always-wake').prop('checked');
 		if (loadedcss !== 'default') {
 			hashstr = hashstr + '&th=' + encodeURIComponent(loadedcss);
 		}
@@ -131,7 +137,7 @@ $(function () {
 		time_inner = parse_time($('#time0').val());
 		show_time();
 
-		if (wakeLock) {
+		if (!alwaysWake && wakeLock) {
 			wakeLock.release()
 		}
 	}
@@ -150,9 +156,11 @@ $(function () {
 		audio_chime2.load();
 		audio_chime3.load();
 
-		navigator.wakeLock.request("screen").then((_this) => {
-			wakeLock = _this;
-		})
+		if (!alwaysWake) {
+			navigator.wakeLock.request('screen').then((_this) => {
+        wakeLock = _this;
+      });
+		}
 	}
 
 	$('.nav #standby').click(function (event) {
@@ -192,7 +200,9 @@ $(function () {
 		$('#state').html('PAUSED');
 		changeStateClass('paused');
 
-		wakeLock.release()
+		if (!alwaysWake && wakeLock) {
+			wakeLock.release();
+		}
 	}
 
 	$('.nav #pause').click(function (event) {
@@ -225,6 +235,17 @@ $(function () {
 		audio_chime1.currentTime = 0;
 		audio_chime1.play();
 	});
+
+	$('#always-wake').change(function (event) {
+		if (event.target.checked) {
+			navigator.wakeLock.request("screen").then((_this) => {
+				wakeLock = _this;
+			});
+		} else if (wakeLock) {
+			wakeLock.release();
+		}
+		updateHash();
+	})
 
 	function format_time(t) {
 		if (t < 0) {

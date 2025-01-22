@@ -130,6 +130,10 @@ $(function () {
 		changePhaseClass('0');
 		time_inner = parse_time($('#time0').val());
 		show_time();
+
+		if (wakeLock) {
+			wakeLock.release()
+		}
 	}
 
 	function start() {
@@ -188,9 +192,7 @@ $(function () {
 		$('#state').html('PAUSED');
 		changeStateClass('paused');
 
-		wakeLock.release().then(() => {
-			wakeLock = null;
-		})
+		wakeLock.release()
 	}
 
 	$('.nav #pause').click(function (event) {

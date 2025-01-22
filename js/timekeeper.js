@@ -27,6 +27,7 @@ $(function () {
 	let time_str = "00:00";
 	let time_inner = 0;
 	var loadedcss = '';
+	let wakeLock = null;
 	$('#time0').val('0:00');
 	$('#time1').val('15:00');
 	$('#time2').val('20:00');
@@ -144,6 +145,10 @@ $(function () {
 		audio_chime1.load();
 		audio_chime2.load();
 		audio_chime3.load();
+
+		navigator.wakeLock.request("screen").then((_this) => {
+			wakeLock = _this;
+		})
 	}
 
 	$('.nav #standby').click(function (event) {
@@ -182,6 +187,10 @@ $(function () {
 		update_time();
 		$('#state').html('PAUSED');
 		changeStateClass('paused');
+
+		wakeLock.release().then(() => {
+			wakeLock = null;
+		})
 	}
 
 	$('.nav #pause').click(function (event) {

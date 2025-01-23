@@ -225,6 +225,10 @@ $(function () {
 		$('#info').css('top', height / 2 + theight / 2);
 		$('#info').css('font-size', iheight + 'px');
 		$('#info').css('line-height', iheight + 'px');
+		var cheight = iheight / 5;
+		$('#copyright').css('top', height - cheight * 1.5);
+		$('#copyright').css('font-size', cheight + 'px');
+		$('#copyright').css('line-height', cheight + 'px');
 	}
 	$(window).bind("resize", resize_display);
 	$(window).bind("orientationchange", resize_display);

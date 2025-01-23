@@ -245,7 +245,16 @@ $(function () {
 			wakeLock.release();
 		}
 		updateHash();
-	})
+	});
+
+	$('button#fullscreen').click(function (event) {
+		event.preventDefault();
+		if (document.fullscreenElement) {
+			document.exitFullscreen();
+		} else {
+			document.documentElement.requestFullscreen();
+		}
+	});
 
 	function format_time(t) {
 		if (t < 0) {

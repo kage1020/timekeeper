@@ -60,7 +60,12 @@ $(function () {
 		if (params.t2 !== undefined) $('#time2').val(params.t2);
 		if (params.t3 !== undefined) $('#time3').val(params.t3);
 		if (params.m !== undefined) $('#info').html(DOMPurify.sanitize(params.m));
-		if (params.wake !== undefined) $('#always-wake').prop('checked', params.wake === 'true');
+		if (params.wake !== undefined) {
+			$('#always-wake').prop('checked', params.wake === 'true');
+			navigator.wakeLock.request("screen").then((_this) => {
+				wakeLock = _this;
+			});
+		}
 		if (loadedcss !== '') {
 			location.reload();
 		}
@@ -372,4 +377,37 @@ $(function () {
 		})
 	}
 	show_time();
+
+	$(document).keydown(function (event) {
+    switch (event.key) {
+      case 's': // Start
+        start();
+        break;
+      case 'p': // Pause
+        pause();
+        break;
+      case 'r': // Standby
+        standby();
+        break;
+      case 'f': // Fullscreen
+        if (document.fullscreenElement) {
+          document.exitFullscreen();
+        } else {
+          document.documentElement.requestFullscreen();
+        }
+        break;
+			case 'w': // Awake
+        if ($('#always-wake').prop('checked')) {
+					wakeLock.release();
+					$('#always-wake').prop('checked', false);
+        } else {
+					navigator.wakeLock.request('screen').then((_this) => {
+						wakeLock = _this;
+					});
+					$('#always-wake').prop('checked', true);
+        }
+				updateHash();
+        break;
+    }
+  });
 });

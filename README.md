@@ -3,7 +3,7 @@ HTML5 and JavaScript based timer with notification chime for academic conference
 
 ### How to Use?
 Access
-https://maruta.github.io/timekeeper/  
+https://kage1020.github.io/timekeeper/  
 or you can use local copy of this repository.
 
 **:bangbang: Be careful to turn off screen savers and automatic screen cut :bangbang:**
